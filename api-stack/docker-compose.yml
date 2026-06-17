@@ -1,0 +1,76 @@
+version: '3.8'
+
+services:
+  # Contenedor 1: El Backend Laravel (PHP)
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: laravel-api-app
+    container_name: api-stack-app
+    restart: unless-stopped
+    tty: true
+    environment:
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    volumes:
+      - .:/var/www
+    networks:
+      - app-network
+
+  # Contenedor 2: El Servidor Web Nginx (Laravel)
+  webserver:
+    image: nginx:alpine
+    container_name: api-stack-nginx
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "8000:80"
+    volumes:
+      - .:/var/www
+      - ./docker-compose/nginx:/etc/nginx/conf.d/
+    networks:
+      - app-network
+    depends_on:
+      - app
+
+  # Contenedor 3: La Base de Datos MySQL
+  db:
+    image: mysql:8.0
+    container_name: api-stack-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_DATABASE: laravel_db
+      MYSQL_ROOT_PASSWORD: root
+    volumes:
+      - dbdata:/var/lib/mysql
+    networks:
+      - app-network
+
+# =======================================================
+  # Contenedor 4: NUEVO - El Frontend Angular
+  # =======================================================
+  frontend:
+    build:
+      context: ../front-stack     # <-- Docker sube un nivel y busca la carpeta de Angular
+      dockerfile: Dockerfile     # <-- Usa el Dockerfile que creamos en Angular
+    image: front-angular-app
+    container_name: front-stack-angular
+    restart: unless-stopped
+    ports:
+      - "4200:80"                # <-- Expone el frontend directamente en el puerto 4200
+    networks:
+      - app-network
+    depends_on:
+      - webserver                # <-- Espera a que el backend esté listo antes de iniciar
+
+networks:
+  app-network:
+    driver: bridge
+
+volumes:
+  dbdata:
+    driver: local

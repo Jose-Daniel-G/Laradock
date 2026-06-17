@@ -1,0 +1,49 @@
+Create archivo Dockerfile, .dockerignore
+
+Create carpeta /docker-compose inside /nginx, create file laravel.conf
+
+Final route api-stack/docker-compose/nginx/laravel.conf
+
+Create Orchestador docker-compose.yml
+
+Execute
+PS C:\laragon\www\api-stack> docker compose up -d --build
+
+# Paso A: Crear  el archivo de entorno desde la plantilla
+cp .env.example .env
+       #### Modificar: 
+        DB_CONNECTION=mysql
+        DB_HOST=db             # <-- IMPORTANTE: Ponemos "db", que es el nombre del contenedor en docker-compose
+        DB_PORT=3306
+        DB_DATABASE=laravel_db # <-- El nombre que le dimos en el docker-compose.yml
+        DB_USERNAME=root
+        DB_PASSWORD=root       # <-- La contraseña que definimos
+
+# Paso B: Levantar la infraestructura de Docker
+docker compose up -d --build
+
+# Paso C: Instalar dependencias y preparar Laravel (Todo dentro de Docker)
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
+
+2. Configurar y levantar el Frontend (front-stack)
+Abre otra terminal en la raíz del proyecto de Angular y ejecuta:
+# Paso A: Construir la imagen con Node 22 y Nginx internos
+docker build -t front-stack-app .
+
+# Paso B: Encender el contenedor en el puerto 4200
+docker run -d -p 4200:80 --name angular-frontend front-stack-app
+
+
+## Si ya esta configurado DOCKER en el proyecto 
+docker compose up -d  //Para encender todo el ecosistema
+docker compose down   //Para apagar absolutamente todo
+
+==========================================
+## Laravel
+composer require laravel/sanctum
+php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
+
+
+php artisan make:model Task -mrc
