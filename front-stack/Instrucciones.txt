@@ -1,0 +1,18 @@
+# Paso A: Crear el archivo de entorno desde la plantilla
+cp .env.example .env
+
+# Paso B: Levantar la infraestructura de Docker
+docker compose up -d --build
+
+# Paso C: Instalar dependencias y preparar Laravel (Todo dentro de Docker)
+docker compose exec app composer install
+docker compose exec app php artisan key:generate
+docker compose exec app php artisan migrate
+
+2. Configurar y levantar el Frontend (front-stack)
+Abre otra terminal en la raíz del proyecto de Angular y ejecuta:
+# Paso A: Construir la imagen con Node 22 y Nginx internos
+docker build -t front-stack-app .
+
+# Paso B: Encender el contenedor en el puerto 4200
+docker run -d -p 4200:80 --name angular-frontend front-stack-app
