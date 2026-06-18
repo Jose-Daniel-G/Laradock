@@ -1,0 +1,35 @@
+cd C:\laragon\www\laradock\front-stack
+
+# 1. Crear las carpetas de destino dentro de assets
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/css"
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/js"
+
+# 2. Copiar los archivos de Estilos (CSS)
+Copy-Item "node_modules/admin-lte/dist/css/adminlte.min.css" "src/assets/admin-lte/css/"
+Copy-Item "node_modules/bootstrap/dist/css/bootstrap.min.css" "src/assets/admin-lte/css/"
+
+# 3. Copiar los archivos de Scripts (JS y dependencias)
+Copy-Item "node_modules/admin-lte/dist/js/adminlte.min.js" "src/assets/admin-lte/js/"
+Copy-Item "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js" "src/assets/admin-lte/js/"
+
+# 4. Crear carpeta de plugins
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/plugins"
+
+# 5. Copiar jQuery (OBLIGATORIO para AdminLTE)
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/plugins/jquery"
+Copy-Item "node_modules/jquery/dist/jquery.min.js" "src/assets/admin-lte/plugins/jquery/"
+
+# 6. Copiar Font Awesome (para los íconos)
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/plugins/fontawesome-free"
+Copy-Item -Recurse "node_modules/@fortawesome/fontawesome-free/css" "src/assets/admin-lte/plugins/fontawesome-free/"
+Copy-Item -Recurse "node_modules/@fortawesome/fontawesome-free/webfonts" "src/assets/admin-lte/plugins/fontawesome-free/"
+
+# Plugins - jQuery
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/plugins/jquery"
+Copy-Item "node_modules/jquery/dist/jquery.min.js" "src/assets/admin-lte/plugins/jquery/"
+
+# Plugins - Font Awesome
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/plugins/fontawesome-free/css"
+New-Item -ItemType Directory -Force -Path "src/assets/admin-lte/plugins/fontawesome-free/webfonts"
+Copy-Item "node_modules/@fortawesome/fontawesome-free/css/all.min.css" "src/assets/admin-lte/plugins/fontawesome-free/css/"
+Copy-Item -Recurse "node_modules/@fortawesome/fontawesome-free/webfonts/." "src/assets/admin-lte/plugins/fontawesome-free/webfonts/"

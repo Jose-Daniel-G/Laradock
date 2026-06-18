@@ -17,6 +17,15 @@ docker stop angular-frontend
 docker ps     //cómo se llama un contenedor o quieres ver cuáles están encendidos en este momento, ejecuta
 
 
+npm install @fortawesome/fontawesome-free --save
+npm install admin-lte bootstrap
+
+cd C:\laragon\www\laradock\front-stack
+
+ng generate component components/header --standalone
+ng generate component components/sidebar --standalone
+ng generate component components/footer --standalone
+
 
 
 

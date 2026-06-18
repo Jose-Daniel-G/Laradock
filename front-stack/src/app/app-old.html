@@ -1,0 +1,120 @@
+<div class="wrapper">
+
+  <nav class="main-header navbar navbar-expand navbar-white navbar-light">
+    <ul class="navbar-nav">
+      <li class="nav-item">
+        <a class="nav-link" data-lte-toggle="sidebar" href="#" role="button"><i class="fas fa-bars"></i></a>
+      </li>
+      <li class="nav-item d-none d-sm-inline-block">
+        <a href="#" class="nav-link">Inicio</a>
+      </li>
+    </ul>
+  </nav>
+
+  <aside class="main-sidebar sidebar-dark-primary elevation-4">
+    <a href="#" class="brand-link">
+      <span class="brand-text font-weight-light px-3">TaskFlow Dashboard</span>
+    </a>
+
+    <div class="sidebar">
+      <nav class="mt-2">
+        <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu">
+          <li class="nav-item">
+            <a href="#" class="nav-link active">
+              <i class="nav-icon fas fa-tasks"></i>
+              <p>Mis Tareas</p>
+            </a>
+          </li>
+        </ul>
+      </nav>
+    </div>
+  </aside>
+
+  <div class="content-wrapper">
+    <div class="content-header">
+      <div class="container-fluid">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0 text-dark">Panel de Control</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <section class="content">
+      <div class="container-fluid">
+        <div class="row">
+          
+          <div class="col-md-4">
+            <div class="card card-primary">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-plus-circle mr-1"></i> Nueva Tarea</h3>
+              </div>
+              <div class="card-body">
+                <div class="form-group mb-3">
+                  <label for="taskTitle">Título de la tarea</label>
+                  <input type="text" id="taskTitle" [(ngModel)]="newTitle" class="form-control" placeholder="Ej: Configurar CORS en Laravel">
+                </div>
+                <div class="form-group mb-3">
+                  <label for="taskDesc">Descripción (Opcional)</label>
+                  <textarea id="taskDesc" [(ngModel)]="newDescription" class="form-control" rows="3" placeholder="Detalles de la tarea..."></textarea>
+                </div>
+              </div>
+              <div class="card-footer">
+                <button (click)="saveTask()" class="btn btn-primary w-100">
+                  <i class="fas fa-save mr-1"></i> Guardar Tarea
+                </button>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-md-8">
+            <div class="card card-outline card-success">
+              <div class="card-header">
+                <h3 class="card-title"><i class="fas fa-list mr-1"></i> Lista de Pendientes</h3>
+              </div>
+              <div class="card-body">
+                
+                @for (task of tasks; track task.id) {
+                  <div class="callout mb-3 d-flex justify-content-between align-items-center shadow-sm"
+                       [class.callout-success]="task.status === 'completed'"
+                       [class.callout-info]="task.status !== 'completed'">
+                    <div>
+                      <h5 class="font-weight-bold mb-1">{{ task.title }}</h5>
+                      <p class="text-muted text-sm mb-2" *ngIf="task.description">{{ task.description }}</p>
+                      <span class="badge" 
+                            [class.badge-success]="task.status === 'completed'" 
+                            [class.badge-warning]="task.status !== 'completed'">
+                        {{ task.status }}
+                      </span>
+                    </div>
+                    <div>
+                      <button class="btn btn-success btn-sm mr-1" title="Completar tarea">
+                        <i class="fas fa-check"></i>
+                      </button>
+                      <button class="btn btn-danger btn-sm" title="Eliminar tarea">
+                        <i class="fas fa-trash"></i>
+                      </button>
+                    </div>
+                  </div>
+                } @empty {
+                  <div class="alert alert-light text-center py-4">
+                    <i class="fas fa-clipboard text-muted fa-2x mb-2"></i>
+                    <p class="text-muted mb-0">No hay tareas disponibles. Crea una en el panel izquierdo.</p>
+                  </div>
+                }
+
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="main-footer">
+    <strong>TaskFlow Ecosistema &copy; 2026</strong>
+    <div class="float-right d-none d-sm-inline-block">Full-Stack Architecture</div>
+  </footer>
+</div>

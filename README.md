@@ -124,3 +124,12 @@ WORDPRESS_API_PASSWORD="**** **** **** **** **** ****@"
 > 🔑 La contraseña corresponde a una **Application Password** generada desde el panel de WordPress (`Usuarios → Editar perfil → Contraseñas de aplicación`). No es la contraseña de acceso al admin.
 
 > ⚠️ **Nunca subas el `.env` al repositorio.** Asegúrate de que `.env` esté en tu `.gitignore`.
+
+
+## Si ya esta configurado DOCKER en el proyecto 
+docker compose up -d  > Para encender todo el ecosistema
+docker compose down   > Para apagar absolutamente todo
+
+# Forzamos la reconstrucción completa del frontend con los nuevos archivos en assets
+docker compose build --no-cache frontend
+docker compose up -d

@@ -2,18 +2,19 @@ import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { TaskService, Task } from './services/task';
+import { Header } from './components/header/header';
+import { Sidebar } from './components/sidebar/sidebar';
+import { Footer } from './components/footer/footer';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [CommonModule, FormsModule], // Importamos módulos para directivas (*ngFor) y formularios
+  imports: [CommonModule, FormsModule, Header, Sidebar, Footer],
   templateUrl: './app.html',
   styleUrl: './app.scss'
 })
 export class App implements OnInit {
   tasks: Task[] = [];
-  
-  // Variables para el formulario de nueva tarea
   newTitle: string = '';
   newDescription: string = '';
 
@@ -23,36 +24,23 @@ export class App implements OnInit {
     this.loadTasks();
   }
 
-  // Llamar al servicio para traer las tareas de Laravel
   loadTasks(): void {
     this.taskService.getTasks().subscribe({
-      next: (data) => {
-        this.tasks = data;
-      },
-      error: (err) => {
-        console.error('Error al cargar tareas:', err);
-      }
+      next: (data) => { this.tasks = data; },
+      error: (err) => { console.error('Error al cargar tareas:', err); }
     });
   }
 
-  // Guardar una nueva tarea
   saveTask(): void {
     if (!this.newTitle.trim()) return;
-
-    const taskData: Task = {
-      title: this.newTitle,
-      description: this.newDescription
-    };
-
+    const taskData: Task = { title: this.newTitle, description: this.newDescription };
     this.taskService.createTask(taskData).subscribe({
       next: (createdTask) => {
-        this.tasks.push(createdTask); // Agregar la nueva tarea a la lista visual
-        this.newTitle = ''; // Limpiar formulario
+        this.tasks.push(createdTask);
+        this.newTitle = '';
         this.newDescription = '';
       },
-      error: (err) => {
-        console.error('Error al crear tarea:', err);
-      }
+      error: (err) => { console.error('Error al crear tarea:', err); }
     });
   }
 }
