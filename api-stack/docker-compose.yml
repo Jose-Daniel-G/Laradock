@@ -1,7 +1,8 @@
-version: '3.8'
-
 services:
+
+  # =======================================================
   # Contenedor 1: El Backend Laravel (PHP)
+  # =======================================================
   app:
     build:
       context: .
@@ -18,7 +19,9 @@ services:
     networks:
       - app-network
 
+  # =======================================================
   # Contenedor 2: El Servidor Web Nginx (Laravel)
+  # =======================================================
   webserver:
     image: nginx:alpine
     container_name: api-stack-nginx
@@ -34,7 +37,9 @@ services:
     depends_on:
       - app
 
-  # Contenedor 3: La Base de Datos MySQL
+  # =======================================================
+  # Contenedor 3: La Base de Datos MySQL (Laravel/Angular)
+  # =======================================================
   db:
     image: mysql:8.0
     container_name: api-stack-db
@@ -50,27 +55,72 @@ services:
     networks:
       - app-network
 
-# =======================================================
-  # Contenedor 4: NUEVO - El Frontend Angular
+  # =======================================================
+  # Contenedor 4: El Frontend Angular
   # =======================================================
   frontend:
     build:
-      context: ../front-stack     # <-- Docker sube un nivel y busca la carpeta de Angular
-      dockerfile: Dockerfile     # <-- Usa el Dockerfile que creamos en Angular
+      context: ../front-stack
+      dockerfile: Dockerfile
     image: front-angular-app
     container_name: front-stack-angular
     restart: unless-stopped
     ports:
-      - "4200:80"                # <-- Expone el frontend directamente en el puerto 4200
+      - "4200:80"
     networks:
       - app-network
     depends_on:
-      - webserver                # <-- Espera a que el backend esté listo antes de iniciar
+      - webserver
 
+  # =======================================================
+  # Contenedor 5: Base de Datos Independiente para WordPress
+  # =======================================================
+  wp-db:
+    image: mysql:8.0
+    container_name: wp-mysql-container
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: wordpress_db
+      MYSQL_USER: wp_user
+      MYSQL_PASSWORD: wp_password
+    ports:
+      - "3307:3306" # Puerto 3307 exterior para no chocar con el 3306 de Laravel
+    volumes:
+      - wp_db_data:/var/lib/mysql
+    networks:
+      - app-network
+
+  # =======================================================
+  # Contenedor 6: El contenedor oficial de WordPress
+  # =======================================================
+  wordpress:
+    image: wordpress:latest
+    container_name: wp-app-container
+    restart: always
+    depends_on:
+      - wp-db
+    ports:
+      - "8085:80" # Tu sitio web estará accesible en el puerto 8085
+    environment:
+      WORDPRESS_DB_HOST: wp-db
+      WORDPRESS_DB_USER: wp_user
+      WORDPRESS_DB_PASSWORD: wp_password
+      WORDPRESS_DB_NAME: wordpress_db
+    volumes:
+      - ./wp-content:/var/www/html/wp-content
+    networks:
+      - app-network
+
+# =======================================================
+# REDES Y VOLÚMENES PERSISTENTES
+# =======================================================
 networks:
   app-network:
     driver: bridge
 
 volumes:
   dbdata:
+    driver: local
+  wp_db_data:
     driver: local

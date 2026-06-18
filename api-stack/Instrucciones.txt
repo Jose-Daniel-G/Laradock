@@ -47,3 +47,8 @@ php artisan vendor:publish --provider="Laravel\Sanctum\SanctumServiceProvider"
 
 
 php artisan make:model Task -mrc
+
+docker compose exec frontend npm install admin-lte bootstrap@^5.3 --save
+
+Angular
+npm install admin-lte bootstrap@^5.3 --save
